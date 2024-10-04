@@ -2,12 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>vue.draggable例子</title>
+    <title>my-bento</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
     <script src="https://www.itxst.com/package/vue/vue.min.js"></script>
     <script src="https://www.itxst.com/package/sortable/Sortable.min.js"></script>
     <script src="https://www.itxst.com/package/vuedraggable/vuedraggable.umd.min.js"></script>
-    
     
     <style scoped>
         *{
@@ -34,7 +33,7 @@
             height: 30px;
             /* background: #4CC06D; */
         }
-        .sheets div{
+        .sheets .sheet_tag{
             flex: 1;
             text-align: center;
             border: 2px solid #FEDE78;
@@ -43,8 +42,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
-        .sheets div:nth-child(1){
+        .sheets .sheet_tag.selected{
             border-bottom: unset;
         }
         .all_recipes{
@@ -240,18 +240,20 @@
 </head>
 <body>
     <div id="app">
+        <button @click="save">save</button>
+        <button @click="load">load</button>
         <!-- <div>{{drag?'拖拽中':'拖拽停止'}}</div> -->
         <div class="all_recipes_wrap">
             <div class="sheets">
-                <div>肉類</div>
-                <div>豆類</div>
-                <div>蛋類</div>
-                <div>蔬菜</div>
-                <div>湯類</div>
+                <div class="sheet_tag" :class="{selected: type_tag=='肉'}" @click="type_tag='肉'">肉類</div>
+                <div class="sheet_tag" :class="{selected: type_tag=='豆'}" @click="type_tag='豆'">豆類</div>
+                <div class="sheet_tag" :class="{selected: type_tag=='蛋'}" @click="type_tag='蛋'">蛋類</div>
+                <div class="sheet_tag" :class="{selected: type_tag=='菜'}" @click="type_tag='菜'">蔬菜</div>
+                <div class="sheet_tag" :class="{selected: type_tag=='湯'}" @click="type_tag='湯'">湯類</div>
             </div>
-            <draggable class="all_recipes" v-model="all_recipes" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd">
+            <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd">
                 <!-- <transition-group> -->
-                    <div class="item" v-for="element in all_recipes" :key="element.id">{{element.name}}</div>
+                    <div class="item" v-for="element in all_recipes_by_type" :key="element.id">{{element.name}}</div>
                 <!-- </transition-group> -->
             </draggable>
         </div>
@@ -285,7 +287,7 @@
         <!-- <button @click="create_check_list">建立list</button> -->
 
         <draggable class="check_list" v-model="all_Ingredient" chosen-class="chosen" force-fallback="true" group="check_list" animation="100" @start="onStart" @end="onEnd">
-            <div class="ingredient_item" v-for="element in all_Ingredient" :key="element" @click="element.done=!element.done" :class="{ done: element.done }">
+            <div class="ingredient_item" v-for="element in all_Ingredient" :key="element" @click="complete_list(element)" :class="{ done: element.done }">
                 <div class="check_icon" @click="onclick(element)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
                         <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 7l3 3 7-7"/>
@@ -350,6 +352,7 @@
                         //     ]
                         // },
                     ],
+                    all_recipes_by_type: [],
                     w1: [
                             // {
                             //     "id": 3,
@@ -401,7 +404,8 @@
                         //     "done": false,
                         //     "note": ""
                         // }
-                    ]
+                    ],
+                    type_tag: '肉',
                 };
             },
             methods: {
@@ -424,12 +428,25 @@
                     console.log('onEnd')
                     this.drag = false;
                     this.show_trash = false;
-                    console.log('w1: ', this.w1)
-                    console.log('w2: ', this.w2)
-                    console.log('w3: ', this.w3)
-                    console.log('w4: ', this.w4)
-                    console.log('w5: ', this.w5)
-                    console.log('all_Ingredient: ', this.all_Ingredient)
+                    // console.log('w1: ', this.w1)
+                    // console.log('w2: ', this.w2)
+                    // console.log('w3: ', this.w3)
+                    // console.log('w4: ', this.w4)
+                    // console.log('w5: ', this.w5)
+                    // console.log('all_Ingredient: ', this.all_Ingredient)
+                    this.save()
+                },
+                complete_list(element){
+                    console.log(element)
+                    if(element.done){
+                        element.done = false
+                    }else{
+                        element.done = true
+                        element.quantity_bought = element.quantity
+                        element.note = null
+                    }
+                    this.save()
+                    console.log(this.all_Ingredient)
                 },
                 onclick(el) {
                     console.log('all_Ingredient: ', this.all_Ingredient)
@@ -457,24 +474,35 @@
                     return result = result.map(i=>{
                         return {
                             ...i,
+                            quantity_bought: null,
                             done: false,
-                            note: ''
+                            note: null
                         }
                     })
-
                 },
                 update_check_list(){
-
                     let done_list = this.all_Ingredient.filter(i=>i.done || i.note)
                     console.log('done_list: ',done_list)
 
                     let new_list = this.create_check_list()
+                    console.log('new_list: ',new_list)
+
                     new_list.forEach(i => {
                         done_list.forEach(o => {
                             if(i.name==o.name && i.unit==o.unit && i.quantity==o.quantity ){ //新需求數量 等於 舊需求
                                 i.done = true
-                            }else if(i.name==o.name && i.unit==o.unit && i.quantity>o.quantity ){ //新需求數量 大於 舊需求
-                                i.note = '不足'
+                            }else if(i.name==o.name && i.unit==o.unit && i.quantity!=o.quantity ){ //新需求數量 大於 舊需求
+                                let difference = i.quantity - o.quantity_bought
+                                if(difference > 0){
+                                    i.note = '不足'+ difference
+                                }else if(difference < 0) {
+                                    i.note = '多出'+ Math.abs(difference)
+                                    i.done = true
+                                }
+                                i.quantity_bought = o.quantity_bought
+                            }
+                            if(i.name==o.name && i.unit==o.unit && i.quantity<=o.quantity_bought ){  // 已經買的數量 大於 新需求
+                                i.done = true
                             }
                         });
                     });
@@ -483,7 +511,6 @@
                 async fetchData() {
                     // this.loading = true;
                     // this.error = null;
-
                     try {
                         // 發送兩個 API 請求並同時等待
                         const [response1, response2] = await Promise.all([
@@ -506,7 +533,7 @@
                         // console.log(recipe)
                         // console.log(Ingredient)
                         this.all_recipes = this.formatData(recipe, Ingredient)
-
+                        this.filter_recipes(this.type_tag)
                     } catch (error) {
                         console.error('Error fetching data:', error);
                         // this.error = 'Failed to load data.';
@@ -549,7 +576,57 @@
                             Ingredient: arr,
                         }
                     })
-                }
+                },
+                async save(){
+                    console.log('save')
+                    let requestData = {
+                        all_Ingredient: JSON.stringify(this.all_Ingredient),
+                        w1: JSON.stringify(this.w1),
+                        w2: JSON.stringify(this.w2),
+                        w3: JSON.stringify(this.w3),
+                        w4: JSON.stringify(this.w4),
+                        w5: JSON.stringify(this.w5),
+                    }
+                    if(!this.all_Ingredient.length) return //防空白
+                    console.log(JSON.stringify(requestData))
+                    try {
+                        const response = await fetch('https://script.google.com/macros/s/AKfycbyo4AfzpCGqla2Ptc426cmSmAP3zv0RoqHklMiHM5AMks9E7AxEk6xzOjzgEhbV8sx1QQ/exec', {
+                        method: 'POST',
+                        headers: {
+                            // 'Content-Type': 'application/json'
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify(requestData)
+                        });
+                        if (!response.ok) {
+                        throw new Error(`HTTP 错误！状态码：${response.status}`);
+                        }
+                        const res = await response.json();
+                        console.log(res.message);
+                    } catch (error) {
+                        console.error('发送数据出错:', error);
+                    }
+                },
+                async load(){
+                    console.log('load')
+                    try {
+                        const response = await fetch('https://script.google.com/macros/s/AKfycbyo4AfzpCGqla2Ptc426cmSmAP3zv0RoqHklMiHM5AMks9E7AxEk6xzOjzgEhbV8sx1QQ/exec');
+                        const data = await response.json();
+                        var {all_Ingredient, w1,w2,w3,w4,w5} = data
+
+                        this.all_Ingredient= JSON.parse(all_Ingredient)
+                        this.w1= JSON.parse(w1)
+                        this.w2= JSON.parse(w2)
+                        this.w3= JSON.parse(w3)
+                        this.w4= JSON.parse(w4)
+                        this.w5= JSON.parse(w5)
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+                filter_recipes(newValue){
+                    this.all_recipes_by_type = this.all_recipes.filter(i=>i.type===newValue)
+                },
             },
             computed:{
                 // all_Ingredient2(){
@@ -594,9 +671,13 @@
             },
             created() {
                 this.fetchData();
+                this.load()
+                // setInterval(this.load, 10000);  //10秒更新一次
             },
             mounted() {
-                this.all_Ingredient = this.create_check_list()
+                // this.all_Ingredient = this.create_check_list()
+                // this.filter_recipes(this.type_tag)
+                
             },
             watch: {
                 count(newValue, oldValue) {
@@ -610,6 +691,9 @@
                         console.log(`減少${oldValue.length - newValue.length}個`)
                         this.all_Ingredient = this.update_check_list()
                     }
+                },
+                type_tag(newValue, oldValue){
+                    this.filter_recipes(newValue)
                 }
             }
         });
