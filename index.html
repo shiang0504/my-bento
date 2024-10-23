@@ -25,7 +25,7 @@
             gap: 10px;
             height: calc(100vh - 30px);
         }
-        .loading{
+        .loading ,.massage_box_fixed{
             position: fixed;
             top: 0;
             left: 0;
@@ -36,6 +36,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .massage_box{
+            width: 80%;
+            /* height: 50%; */
+            background: #ffffff;
         }
         .all_recipes_wrap{
             flex: 1 0 15%;
@@ -234,7 +239,7 @@
             border-radius: 50%;
             width: 20px;
             height: 20px;
-            border: 3px solid #E6E6E6;
+            border: 3px solid #afafaf;
             margin-right: 10px;
             display: flex;
             justify-content: center;
@@ -260,15 +265,25 @@
         .ingredient_item.done .check_icon svg{
             color:#4CC06D;
             display: block;
-            
+        }
+        .recipeFrom{
+            font-size: 9px;
+            color: gray;
         }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="loading" v-show="this.loading">載入中...</div>
+        <!-- <div class="massage_box_fixed">
+            <div class="massage_box"></div>
+        </div> -->
+
         <!-- <button @click="save">save</button> -->
-        <button @click="load">重新整理</button>
+        <div class="buttons">
+            <button @click="load">重新整理</button>
+            <button @click="delete_week">清除全部</button>
+        </div>
         <div class="all_recipes_wrap">
             <div class="sheets">
                 <div class="sheet_tag" :class="{selected: type_tag=='肉'}" @click="type_tag='肉'">
@@ -359,30 +374,30 @@
             </div>
             <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd">
                 <!-- <transition-group> -->
-                    <div class="item" v-for="element in all_recipes_by_type" :key="element.id">{{element.name}}</div>
+                    <div class="item" :class="classObject1(element)" v-for="element in all_recipes_by_type" :key="element.id" >{{element.name}}</div>
                 <!-- </transition-group> -->
             </draggable>
         </div>
 
         <div class="week">
             <draggable class="area area1" v-model="w1" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
-                <div class="item" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w1" :key="element.id">{{element.name}}</div>
+                <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w1" :key="element.id">{{element.name}}</div>
             </draggable>
 
             <draggable class="area area2" v-model="w2" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
-                <div class="item" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w2" :key="element.id">{{element.name}}</div>
+                <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w2" :key="element.id">{{element.name}}</div>
             </draggable>
 
             <draggable class="area area3" v-model="w3" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
-                <div class="item" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w3" :key="element.id">{{element.name}}</div>
+                <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w3" :key="element.id">{{element.name}}</div>
             </draggable>
 
             <draggable class="area area4" v-model="w4" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
-                <div class="item" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w4" :key="element.id">{{element.name}}</div>
+                <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w4" :key="element.id">{{element.name}}</div>
             </draggable>
 
             <draggable class="area area5" v-model="w5" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
-                <div class="item" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w5" :key="element.id">{{element.name}}</div>
+                <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w5" :key="element.id">{{element.name}}</div>
             </draggable>
         </div>
 
@@ -410,12 +425,13 @@
                     </svg>
                 </div>
                 <div class="flex jcsb">
-                    <div class="ingredient_name">{{ element.name }}</div>
+                    <div class="ingredient_name">{{ element.name }} <span class="recipeFrom" v-for="(recipe, index) in element.recipeFrom">{{ recipe }}<span v-if="index !== element.recipeFrom.length - 1">、</span></span></div>
                     <div v-if="element.unit==='少許'" class="ingredient_quantity"><span class="note" v-if="element.note">{{ `(${element.note})` }}</span>{{ element.unit }} X {{ element.quantity }}</div>
                     <div v-else class="ingredient_quantity"><span class="note" v-if="element.note">{{ `(${element.note})` }}</span>{{ element.quantity }} {{ element.unit }}</div>
                 </div>
             </div>
         </draggable>
+
 
 
     </div>
@@ -608,7 +624,8 @@
                                     quantity: Number(j.quantity),
                                     unit: j.unit,
                                     type: j.type,
-                                    repeat: false
+                                    repeat: false,
+                                    recipeFrom: [i.name],
                                 }
                                 arr.push(obj)
                             }
@@ -683,7 +700,6 @@
                             // console.log(JSON.stringify(i))
                             // console.log(JSON.stringify(j))
                             if(JSON.stringify(i) === JSON.stringify(j)){
-                                
                                 i.repeat = true
                                 j.repeat = true
                             }
@@ -716,6 +732,26 @@
                         'meat-class': item.type === '肉類',
                         'done': item.done
                     };
+                },
+                classObject1(item) {
+                    return {
+                        'root-class': item.type === '湯',
+                        'leaf-class': item.type === '菜',
+                        // 'spices-class': item.type === '湯',
+                        'goods-class': item.type === '蛋',
+                        'bean-class': item.type === '豆',
+                        'meat-class': item.type === '肉',
+                    };
+                },
+                delete_week(){
+                    if(window.confirm('此動作會清空安排好的菜單以及待採購清單，確定嗎?')){
+                        this.w1=[]
+                        this.w2=[]
+                        this.w3=[]
+                        this.w4=[]
+                        this.w5=[]
+                        this.onDataChange()
+                    }
                 }
             },
             computed:{
@@ -749,6 +785,7 @@
                         return
                     }
                     console.log(`changed from ${oldValue.length} to ${newValue.length}`);
+
                     const differences = this.findDifferences(oldValue, newValue);
                     if(newValue.length > oldValue.length){
                         console.log(`增加${newValue.length - oldValue.length}個`, differences); 
@@ -759,6 +796,7 @@
                                 if(i.name==n.name && i.unit==n.unit ){
                                     n.repeat = true
                                     i.quantity += n.quantity
+                                    i.recipeFrom.push(n.recipeFrom[0]) //
                                     if(i.quantity_bought && i.quantity > i.quantity_bought){
                                         i.note = '不足'+ n.quantity
                                         i.done = false
@@ -785,6 +823,9 @@
                             differences.forEach(n => {
                                 if(i.name==n.name && i.unit==n.unit ){
                                     i.quantity -= n.quantity
+                                    var recipeFrom_index = i.recipeFrom.indexOf(n.recipeFrom[0]); //
+                                    if (recipeFrom_index !== -1) i.recipeFrom.splice(recipeFrom_index, 1);
+
                                     if(i.quantity < i.quantity_bought){
                                         i.note = '多出'+ Math.abs(n.quantity)
                                         i.done = true
@@ -798,6 +839,7 @@
                         this.all_Ingredient = this.all_Ingredient.filter(i=>i.quantity>0)
                     }
                     this.sort_list()
+                    console.log(this.all_Ingredient)
                 },
                 type_tag(newValue, oldValue){
                     this.filter_recipes(newValue)
