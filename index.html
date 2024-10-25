@@ -366,7 +366,7 @@
             </div> -->
         </div>
 
-        <draggable class="check_list" v-model="all_Ingredient" chosen-class="chosen" force-fallback="true" group="check_list" animation="100" @start="onStart" @end="onEnd">
+        <draggable class="check_list" v-model="all_Ingredient" chosen-class="chosen" force-fallback="true" group="check_list" animation="100" @start="onStart" @end="onEnd" delay="1000">
             <div class="ingredient_item" v-for="element in all_Ingredient" :key="element" @click="complete_list(element)" :class="classObject(element)">
                 <div class="check_icon" @click="onclick(element)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
@@ -509,18 +509,13 @@
                     this.onDataChange()
                 },
                 complete_list(element){
-                    console.log(element)
-                    if(element.done){
-                        console.log(element.done)
-                        element.done = false
-                    }else{
-                        console.log(element.done)
-                        element.done = true
-                        element.quantity_bought = element.quantity
-                        element.note = null
-                    }
-                    this.onDataChange()
-                    // console.log('all_Ingredient:', this.all_Ingredient)
+                  element.done = !element.done;
+                  if (element.done) {
+                      element.quantity_bought = element.quantity;
+                      element.note = null;
+                  }
+                  this.onDataChange()
+                  // console.log('all_Ingredient:', this.all_Ingredient)
                 },
                 onclick(el) {
                     console.log('all_Ingredient:', this.all_Ingredient)
@@ -622,8 +617,10 @@
                     }
                 },
                 onDataChange() {
-                    if(this.debounceTimer) clearTimeout(this.debounceTimer);
-                    this.debounceTimer = setTimeout(this.save, 3000);
+                    // if(this.debounceTimer) clearTimeout(this.debounceTimer);
+                    // this.debounceTimer = setTimeout(() => {
+                        this.save();
+                    // }, 3000);
                 },
                 async load(){
                     console.log('load active')
@@ -784,7 +781,7 @@
                             );
                             if (existing) {
                                 // 如果存在，則將 quantity 相加
-                                existing.quantity += curr.quantity;
+                                existing.quantity = parseFloat((existing.quantity + curr.quantity).toFixed(2)) ;
                                 existing.recipeFrom.push(curr.recipeFrom[0]) 
                             } else {
                                 // 如果不存在，則將當前物件加入 acc
@@ -803,7 +800,7 @@
                                 if(n.repeat) return
                                 if(i.name==n.name && i.unit==n.unit){
                                     n.repeat = true
-                                    i.quantity += n.quantity
+                                    i.quantity = parseFloat((i.quantity + n.quantity).toFixed(2)) ;
                                     i.recipeFrom.push(n.recipeFrom[0]) //
                                     if(i.quantity_bought && i.quantity > i.quantity_bought){
                                         i.note = '不足'+ n.quantity
@@ -832,7 +829,7 @@
                         this.all_Ingredient.forEach(i => {
                             differences.forEach(n => {
                                 if(i.name==n.name && i.unit==n.unit ){
-                                    i.quantity -= n.quantity
+                                    i.quantity = parseFloat((i.quantity - n.quantity).toFixed(2)) ;
                                     var recipeFrom_index = i.recipeFrom.indexOf(n.recipeFrom[0]); //
                                     if (recipeFrom_index !== -1) i.recipeFrom.splice(recipeFrom_index, 1);
 
