@@ -26,9 +26,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            /* height: calc(100% - 54px); */
-            /* height: 100vh; */
-            height: 100%;
+            height: 100vh;
+            max-height: -webkit-fill-available; /* 使100vh包含工具列 */
         }
         .loading ,.massage_box_fixed{
             position: fixed;
