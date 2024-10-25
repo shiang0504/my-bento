@@ -67,6 +67,7 @@
         .all_recipes_wrap{
             flex: 1 0 15%;
             padding: 10px;
+            /* overflow: hidden; */
         }
         .sheets{
             display: flex;
@@ -102,6 +103,7 @@
             flex-wrap: wrap;
             gap: 5px;
             height: calc(100% - 30px);
+            /* overflow: hidden; */
         }
         .item {
             padding: 6px;
@@ -309,8 +311,10 @@
             <button @click="load">🔄重新整理</button>
             <button @click="clean_up">🧹清除全部</button>
             <button @click="auto_order">🎲隨機產生</button>
+            <button @click="hide_all_recipes_and_week" v-if="show_all_recipes_wrap">🙈隱藏菜單</button>
+            <button @click="hide_all_recipes_and_week" v-else>👁‍🗨顯示菜單</button>
         </div>
-        <div class="all_recipes_wrap">
+        <div class="all_recipes_wrap" v-show="show_all_recipes_wrap">
             <div class="sheets">
                 <div class="sheet_tag" :class="{selected: type_tag=='肉'}" @click="type_tag='肉'">🍖</div>
                 <div class="sheet_tag" :class="{selected: type_tag=='豆'}" @click="type_tag='豆'">🌱</div>
@@ -325,7 +329,7 @@
             </draggable>
         </div>
 
-        <div class="week">
+        <div class="week"  v-show="show_week">
             <draggable class="area area1" v-model="w1" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd">
                 <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w1" :key="element.id">{{element.name}}</div>
             </draggable>
@@ -398,6 +402,8 @@
                     is_loading: true,
                     is_saving: false,
                     toggle_switch: false,
+                    show_all_recipes_wrap: true,
+                    show_week: true,
                     all_recipes: [
                         // {
                         //     id: 1,
@@ -732,6 +738,9 @@
                         week[i].push(egg[Math.floor(Math.random()*egg.length)])
                     }
                     this.is_ramdom = true
+                },hide_all_recipes_and_week(){
+                    this.show_all_recipes_wrap = !this.show_all_recipes_wrap
+                    this.show_week = !this.show_week
                 }
             },
             computed:{
