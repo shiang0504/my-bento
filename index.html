@@ -190,7 +190,7 @@
             top: 20px;
             transform: translate(-50%, -50%);
             color: #fcd248;
-            font-size: 12px;
+            font-size: 11px;
             z-index: 0;
             text-wrap: nowrap;
         }
@@ -411,7 +411,7 @@
                     <div class="sheet_tag" :class="{selected: type_tag=='菜'}" @click="type_tag='菜'">🥦</div>
                     <div class="sheet_tag" :class="{selected: type_tag=='湯'}" @click="type_tag='湯'">🍵</div>
                 </div>
-                <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd" delay="500">
+                <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <!-- <transition-group> -->
                         <div class="item" :class="classObject1(element)" v-for="element in all_recipes_by_type" :key="element.id" >{{element.name}}</div>
                     <!-- </transition-group> -->
@@ -419,23 +419,23 @@
             </div>
     
             <div class="week">
-                <draggable class="area area1" v-model="w1" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="1000">
+                <draggable class="area area1" v-model="w1" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w1" :key="element.id">{{element.name}}</div>
                 </draggable>
     
-                <draggable class="area area2" v-model="w2" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="1000">
+                <draggable class="area area2" v-model="w2" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w2" :key="element.id">{{element.name}}</div>
                 </draggable>
     
-                <draggable class="area area3" v-model="w3" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="1000">
+                <draggable class="area area3" v-model="w3" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w3" :key="element.id">{{element.name}}</div>
                 </draggable>
     
-                <draggable class="area area4" v-model="w4" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="1000">
+                <draggable class="area area4" v-model="w4" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w4" :key="element.id">{{element.name}}</div>
                 </draggable>
     
-                <draggable class="area area5" v-model="w5" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="1000">
+                <draggable class="area area5" v-model="w5" chosen-class="chosen" force-fallback="true" group="people" animation="100" @start="onStart" @end="onEnd" delay="100">
                     <div class="item" :class="classObject1(element)" @mousedown="trash_start" @touchstart="trash_start" @mouseup="trash_end" @touchend="trash_end" v-for="element in w5" :key="element.id">{{element.name}}</div>
                 </draggable>
             </div>
@@ -457,7 +457,7 @@
                     <span @click="toggle_switch=true; visibility='notcompleted'">未取得</span>
                 </div> -->
             </div>
-            <draggable class="check_list" v-model="all_Ingredient" chosen-class="chosen" force-fallback="true" group="check_list" animation="100" @start="onStart" @end="onEnd" delay="1000">
+            <draggable class="check_list" v-model="all_Ingredient" chosen-class="chosen" force-fallback="true" group="check_list" animation="100" @start="onStart" @end="onEnd" delay="100">
                 <div class="ingredient_item" v-for="element in all_Ingredient" :key="element" @click="complete_list(element)" :class="classObject(element)">
                     <div class="check_icon" @click="onclick(element)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
