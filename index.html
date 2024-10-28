@@ -14,6 +14,7 @@
             margin: 0;
             box-sizing: border-box;
             font-family: Georgia, "Times New Roman", Times, serif;
+            user-select: none;
         }
         body{
             user-select: none;
@@ -25,7 +26,7 @@
         }
         #app{
             display: flex;
-            height: calc(100vh - 80px);
+            /* height: calc(100vh - 80px); */
             max-height: -webkit-fill-available; /* 使100vh包含工具列 */
             gap: 10px;
         }
@@ -33,7 +34,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            height: 100%;
+            height: calc(100vh - 80px);
             flex: 0 0 100%;
             /* transform: translateX(-100%); */
 
@@ -41,7 +42,7 @@
         #buy_page{
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: calc(100vh - 80px);
             flex: 0 0 100%;
             /* transform: translateX(-100%); */
 
@@ -82,6 +83,8 @@
         }
         .all_recipes_wrap{
             flex: 1 0 40%;
+            flex: 0 0 25%;
+            overflow: hidden;
             /* flex: 1 0 15%; */
             padding: 10px;
             /* overflow: hidden; */
@@ -150,6 +153,7 @@
             display: flex;
             gap: 5px;
             flex: 1 0 40%;
+            flex: 1 0 auto;
             /* flex: 1 0 25%; */
             overflow: hidden;
         }
@@ -179,7 +183,7 @@
             top: 20px;
             transform: translate(-50%, -50%);
             color: #fcd248;
-            font-size: 14px;
+            font-size: 12px;
             z-index: 0;
             text-wrap: nowrap;
         }
@@ -331,7 +335,7 @@
             width: 100%;
             position: fixed;
             bottom: 0;
-            /* background: #F2F2F2; */
+            background: #F2F2F2;
             box-shadow: #afafaf 0px 1px 10px 2px;
             left: 0;
             display: flex;
@@ -348,6 +352,12 @@
             cursor: pointer;
             position: relative;
         }
+        .menu svg{
+            height: 30px;
+            width: 30px;
+            fill: #7a7871;
+        }
+
         .plan_btn.active::before, .buy_btn.active::before{
             content: '';
             width: 40px;
@@ -360,12 +370,10 @@
             right: 0;
             margin: auto;
         }
-
-        .menu svg{
-            height: 30px;
-            width: 30px;
-            fill: #7a7871;
+        .plan_btn.active svg, .buy_btn.active svg{
+            /* fill: #fdca31; */
         }
+
     </style>
 </head>
 <body>
@@ -396,7 +404,7 @@
                     <div class="sheet_tag" :class="{selected: type_tag=='菜'}" @click="type_tag='菜'">🥦</div>
                     <div class="sheet_tag" :class="{selected: type_tag=='湯'}" @click="type_tag='湯'">🍵</div>
                 </div>
-                <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd">
+                <draggable class="all_recipes" v-model="all_recipes_by_type" chosen-class="chosen" force-fallback="true" :group="{ name: 'people', pull: 'clone', put: false }" animation="100" @start="onStart" @end="onEnd" delay="500">
                     <!-- <transition-group> -->
                         <div class="item" :class="classObject1(element)" v-for="element in all_recipes_by_type" :key="element.id" >{{element.name}}</div>
                     <!-- </transition-group> -->
