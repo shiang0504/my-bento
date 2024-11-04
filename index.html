@@ -21,38 +21,31 @@
         body{
             user-select: none;
             background-color: #F2F2F2;
-            height: 100%;
-            height: -moz-available;
-            height: -webkit-fill-available;  
-            height: fill-available;
+            padding: 10px;
+            /*height: 100vh; */
             overflow: hidden;
 
         }
         #app{
-            height: 100%;
             display: flex;
-            flex-direction: column;
             /* height: calc(100vh - 80px); */
-            /* max-height: -webkit-fill-available; */
-            /* gap: 10px; */
+            max-height: -webkit-fill-available; /* 使100vh包含工具列 */
+            gap: 10px;
         }
         #plan_page{
-            padding: 10px;
-
             display: flex;
             flex-direction: column;
             gap: 10px;
-            /* height: calc(100% - 80px); */
-            flex: 1 1 auto;
+            height: calc(100vh - 160px);
+            flex: 0 0 100%;
             /* transform: translateX(-100%); */
 
         }
         #buy_page{
             display: flex;
             flex-direction: column;
-            flex: 1 1 auto;
-            overflow: hidden;
-            /* height: calc(100% - 60px); */
+            height: calc(100vh - 160px);
+            flex: 0 0 100%;
             /* transform: translateX(-100%); */
 
         }
@@ -167,7 +160,7 @@
             display: flex;
             gap: 5px;
             /* flex: 1 0 40%; */
-            flex: 1 1 auto;
+            flex: 1 0 calc(75% - 45px);
             /* flex: 1 0 25%; */
             overflow: hidden;
         }
@@ -287,6 +280,7 @@
             flex: 1 1 auto;
             /* flex: 1 1 calc(60% - 80px); */
             overflow: auto;
+            
         }
         .ingredient_item{
             width: 90%;
@@ -345,11 +339,10 @@
         }
 
         .menu{
-            flex: 0 0 60px;
-            /* height: 60px; */
+            height: 60px;
             width: 100%;
-            /* position: fixed; */
-            /* bottom: 0; */
+            position: fixed;
+            bottom: 0;
             background: #F2F2F2;
             box-shadow: #afafaf 0px 1px 10px 2px;
             left: 0;
